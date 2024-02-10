@@ -1,0 +1,8 @@
+{
+  "name": "yourbfinance.io",
+  "version": "1.0.0",
+  "description": "personal finance management app",
+  "main": "server.ts",
+  "author": "xtirian",
+  "license": "MIT"
+}
