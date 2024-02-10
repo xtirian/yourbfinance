@@ -4,5 +4,45 @@
   "description": "personal finance management app",
   "main": "server.ts",
   "author": "xtirian",
-  "license": "MIT"
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "ts-node-dev --respawn --transpile-only server.ts",
+    "dev": "ts-node-dev --inspect=0.0.0.0:9229 --watch --respawn --transpile-only --ignore-watch node_modules -r tsconfig-paths/register ./src/server.ts",
+    "build": "tsc",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "devMigration": "npx prisma migrate dev --name init",
+    "studio": "npx prisma studio"
+  },
+  "devDependencies": {
+    "@types/bunyan": "^1.8.11",
+    "@types/bunyan-format": "^0.2.9",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.17",
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-standard-with-typescript": "^43.0.1",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-promise": "^6.0.0",
+    "prettier": "^3.2.5",
+    "prisma": "^5.9.1",
+    "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "*"
+  },
+  "dependencies": {
+    "@prisma/client": "5.9.1",
+    "bunyan": "^1.8.15",
+    "bunyan-format": "^0.2.1",
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "uuid": "^9.0.1"
+  }
 }
