@@ -1,22 +1,34 @@
-import { Router } from 'express';
-import UserRepository from '../repository/user.respository';
+import { type Request, type Response, Router } from 'express';
+import { UserRepository } from '../repository/user.respository';
 import { type UserModel } from '../model/user.model';
 import bcrypt from 'bcrypt';
 
 const router = Router();
 
-const repository = UserRepository;
+const repository = new UserRepository();
 
 // GET /users
-router.get('/', (req, res) => {
-  const users = repository.findMany({});
+router.get('/', (req: Request, res: Response) => {
+  const users: Promise<UserModel[]> = repository.findMany({});
+
+  if (users instanceof Error) {
+    res.status(400).send({ error: users.message });
+    return;
+  }
+
   res.status(200).json({ users });
 });
 
 // GET /users/:id
-router.get('/:id', (req, res) => {
+router.get('/:id', (req: Request, res: Response) => {
   const id: string = (req.body as { id: string }).id;
-  const user = repository.findUnique({ where: { id } });
+  const user: Promise<UserModel | null> = repository.findUnique({ where: { id } });
+
+  if (user instanceof Error) {
+    res.status(400).send({ error: user.message });
+    return;
+  }
+
   res.status(200).json({ user });
 });
 
