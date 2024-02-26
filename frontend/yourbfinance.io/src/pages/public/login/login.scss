@@ -1,0 +1,19 @@
+@use '../../../sass/_mixin.scss' as *;
+
+.login_form{
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+}
+
+.link_loginForm{
+  @include link;
+}
+
+.form_Label{
+  @include formLabel;
+}
+
+.input_Login{
+  @include formInput;
+}
