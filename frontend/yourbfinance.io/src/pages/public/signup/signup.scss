@@ -1,0 +1,15 @@
+@use '../../../sass/_mixin.scss' as *;
+
+.signup_form{
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+}
+
+.formText{
+  @include formText;
+}
+
+.link_signupForm{
+  @include link;
+}
