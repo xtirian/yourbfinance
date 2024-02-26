@@ -11,6 +11,10 @@ export class UserRepository {
     return await prisma.user.findUnique({ ...params });
   }
 
+  async findFirst(params: Prisma.UserFindFirstArgs): Promise<UserModel | null> {
+    return await prisma.user.findFirst({ ...params });
+  }
+
   async create(params: Prisma.UserCreateArgs): Promise<UserModel> {
     return await prisma.user.create({ ...params });
   }

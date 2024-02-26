@@ -2,6 +2,8 @@ import { type Request, type Response, Router } from 'express';
 import { UserRepository } from '../repository/user.respository';
 import { type UserModel } from '../model/user.model';
 import bcrypt from 'bcrypt';
+import { jwtConfig } from '../utils/JTWConfig';
+import { logger } from '../config';
 
 const router = Router();
 
@@ -28,17 +30,28 @@ router.get('/:id', (req: Request, res: Response) => {
     res.status(400).send({ error: user.message });
     return;
   }
-
-  res.status(200).json({ user });
+  const token = jwtConfig(user);
+  res.status(200).json({ token });
 });
 
 // POST CREATE ACCOUNT /users
-router.post('/', (req, res) => {
-  const { name, email, password } = req.body as { name: string; email: string; password: string };
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+router.post('/signup', async (req, res): Promise<void> => {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const { name, last_name, email, password } = req.body as {
+    name: string;
+    last_name: string;
+    email: string;
+    password: string;
+  };
+
+  logger.info('Creating user');
 
   if (
     name === '' ||
     name === undefined ||
+    last_name === '' ||
+    last_name === undefined ||
     email === '' ||
     email === undefined ||
     password === '' ||
@@ -48,10 +61,10 @@ router.post('/', (req, res) => {
     return;
   }
 
-  const checkUser = async (): Promise<UserModel | null> => await repository.findUnique({ where: { email } });
+  const checkUser = await repository.findFirst({ where: { email } });
 
-  if (checkUser() === null) {
-    res.status(400).json({ error: 'User already exists' });
+  if (checkUser !== null) {
+    res.status(400).json({ message: 'Usuário já existe' });
     return;
   }
 
@@ -67,9 +80,12 @@ router.post('/', (req, res) => {
 
   const hashedPassword = bcryptWithHashSync.hashSync(password, salt);
 
-  const user = repository.create({
+  logger.info('hashedPassword', hashedPassword);
+
+  const user = await repository.create({
     data: {
       name,
+      last_name,
       email,
       password: hashedPassword
     }
