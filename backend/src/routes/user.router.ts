@@ -3,7 +3,6 @@ import { UserRepository } from '../repository/user.respository';
 import { type UserModel } from '../model/user.model';
 import bcrypt from 'bcrypt';
 import { jwtConfig } from '../utils/JTWConfig';
-import { logger } from '../config';
 
 const router = Router();
 
@@ -22,12 +21,13 @@ router.get('/', (req: Request, res: Response) => {
 });
 
 // GET /users/:id
-router.get('/:id', (req: Request, res: Response) => {
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+router.get('/:id', async (req: Request, res: Response) => {
   const id: string = (req.body as { id: string }).id;
-  const user: Promise<UserModel | null> = repository.findUnique({ where: { id } });
+  const user = await repository.findUnique({ where: { id } });
 
-  if (user instanceof Error) {
-    res.status(400).send({ error: user.message });
+  if (user === null) {
+    res.status(400).send({ error: 'Usuário não encontrado' });
     return;
   }
   const token = jwtConfig(user);
@@ -44,8 +44,6 @@ router.post('/signup', async (req, res): Promise<void> => {
     email: string;
     password: string;
   };
-
-  logger.info('Creating user');
 
   if (
     name === '' ||
@@ -80,8 +78,6 @@ router.post('/signup', async (req, res): Promise<void> => {
 
   const hashedPassword = bcryptWithHashSync.hashSync(password, salt);
 
-  logger.info('hashedPassword', hashedPassword);
-
   const user = await repository.create({
     data: {
       name,
@@ -91,6 +87,36 @@ router.post('/signup', async (req, res): Promise<void> => {
     }
   });
   res.status(201).json({ user });
+});
+
+// POST LOGIN ACCOUNT /users
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body as { email: string; password: string };
+
+    const user = await repository.findFirst({ where: { email } });
+
+    if (user === null) {
+      res.status(400).json({ message: 'Usuário ou senha inválido' });
+      return;
+    }
+
+    const compare = bcrypt.compareSync(password, user.password);
+
+    if (!compare) {
+      res.status(400).json({ message: 'Usuário ou senha inválido' });
+      return;
+    }
+
+    const token = jwtConfig(user);
+
+    if (token === undefined) res.status(500).json({ message: 'Erro ao gerar token' });
+
+    res.status(200).json({ token, avatar: user.avatar });
+  } catch {
+    res.status(500).json({ message: 'Erro interno' });
+  }
 });
 
 export default router;
