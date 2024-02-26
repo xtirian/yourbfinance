@@ -1,0 +1,28 @@
+@use './var' as *;
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body{
+  font-family: 'Inter', sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: $bg_global;
+}
+
+a{
+  text-decoration: none;  
+  color: inherit;  
+}
+
+li{
+  list-style: none;
+}
