@@ -12,14 +12,29 @@ import {
 } from '@chakra-ui/react';
 import { Field, FieldProps, Form, Formik } from 'formik';
 import { loginSchema } from '../../../lib/schemas/loginSchema';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { IoEyeOutline } from 'react-icons/io5';
 import { FaRegEyeSlash } from 'react-icons/fa';
 import './login.scss';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { UserModel } from '../../../lib/models/userModel';
+import { UserContext } from '../../../context/user.context';
 
 const LoginPagina = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const { signin } = useContext(UserContext);
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (data: UserModel) => {
+    const response = await signin(data);
+    console.log(response);
+    if (response) {
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+    }
+  };
 
   return (
     <Flex
@@ -38,8 +53,9 @@ const LoginPagina = () => {
         />
         <Formik
           validationSchema={loginSchema}
-          initialValues={{ email: '' }}
+          initialValues={{ email: '', password: ''}}
           onSubmit={(values, actions) => {
+            handleSubmit(values);
             actions.setSubmitting(false);
           }}
         >

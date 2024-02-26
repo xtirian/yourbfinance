@@ -12,4 +12,4 @@ export type UserModel = Partial<{
   /*Goals?: GoalModel[];
   Transactions?: TransactionModel[];
   Categories?: CategoryModel[];*/
-}>
+}>;
