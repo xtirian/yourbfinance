@@ -12,29 +12,38 @@ import {
 } from '@chakra-ui/react';
 import { Field, FieldProps, Form, Formik } from 'formik';
 import { loginSchema } from '../../../lib/schemas/loginSchema';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { IoEyeOutline } from 'react-icons/io5';
 import { FaRegEyeSlash } from 'react-icons/fa';
 import './login.scss';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserModel } from '../../../lib/models/userModel';
 import { UserContext } from '../../../context/user.context';
+import { path } from '../../../lib/utils/PageHandler';
 
 const LoginPagina = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const { signin } = useContext(UserContext);
+  const { signin, isLogged } = useContext(UserContext);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (data: UserModel) => {
     const response = await signin(data);
-    console.log(response);
     if (response) {
       setTimeout(() => {
-        navigate('/');
+        navigate('/auth/dashboard');
       }, 2000);
     }
   };
+
+  useEffect(() => {
+    if (!isLogged) {
+      navigate('/');
+    }
+    if (isLogged) {
+      navigate(`${path}dashboard`);
+    }
+  }, [isLogged, navigate]);
 
   return (
     <Flex
@@ -53,7 +62,7 @@ const LoginPagina = () => {
         />
         <Formik
           validationSchema={loginSchema}
-          initialValues={{ email: '', password: ''}}
+          initialValues={{ email: '', password: '' }}
           onSubmit={(values, actions) => {
             handleSubmit(values);
             actions.setSubmitting(false);
@@ -66,8 +75,15 @@ const LoginPagina = () => {
                   <FormControl
                     isInvalid={!!(form.errors.email && form.touched.email)}
                   >
-                    <FormLabel className='form_Label'>Endereço de e-mail</FormLabel>
-                    <Input {...field} placeholder="johndoe@email.com" className='input_Login' size={'lg'} />
+                    <FormLabel className="form_Label">
+                      Endereço de e-mail
+                    </FormLabel>
+                    <Input
+                      {...field}
+                      placeholder="johndoe@email.com"
+                      className="input_Login"
+                      size={'lg'}
+                    />
                     <FormErrorMessage>
                       {typeof form.errors.email === 'string' &&
                         form.errors.email}
@@ -82,14 +98,13 @@ const LoginPagina = () => {
                       !!(form.errors.password && form.touched.password)
                     }
                   >
-                    <FormLabel className='form_Label'>Senha</FormLabel>
+                    <FormLabel className="form_Label">Senha</FormLabel>
                     <InputGroup size={'lg'}>
                       <Input
                         {...field}
                         placeholder="********"
                         type={showPassword ? 'string' : 'password'}
-                        className='input_Login'
-                        
+                        className="input_Login"
                       />
                       <InputRightElement>
                         {showPassword ? (
@@ -127,7 +142,9 @@ const LoginPagina = () => {
           )}
         </Formik>
         <Text mt={'40px'} textAlign={'center'}>
-          <Link to="/signup" className='link_loginForm'>Criar uma conta</Link>
+          <Link to="/signup" className="link_loginForm">
+            Criar uma conta
+          </Link>
         </Text>
       </Flex>
     </Flex>

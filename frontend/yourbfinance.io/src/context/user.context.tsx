@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { UserModel } from '../lib/models/userModel';
 import { signupApi } from '../lib/api/signup';
 
@@ -7,6 +7,7 @@ import { AxiosError } from 'axios';
 import { ErrorResponse } from '../lib/api';
 import { login } from '../lib/api/login';
 import { jwtDecode } from 'jwt-decode';
+import Cookies from 'js-cookie';
 
 interface UserContextProps {
   isLogged: boolean;
@@ -85,12 +86,15 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       const response = await login(data);
       if (response instanceof Error) throw new Error();
 
+      if (!response?.token) throw new Error('Token not found');
+
       const decoded = jwtDecode<UserModel>(response?.token as string);
 
       if (!decoded) throw new Error('Error on decode token');
 
-      setUserData({ ...decoded as UserModel,
-        avatar: response.avatar, });
+      Cookies.set('AccessAuth', response?.token, { expires: 1 });
+
+      setUserData({ ...(decoded as UserModel), avatar: response.avatar });
 
       toast({
         title: 'Login realizado',
@@ -118,9 +122,15 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   const setUserData = async (data: UserModel) => {
     setUser(data);
-    console.log(data);
     setIsLogged(true);
   };
+
+  useEffect(() => {
+    Cookies.get('AccessAuth') && setIsLogged(true);
+    
+  
+  }, [])
+  
 
   // TODO: Criar contexto de cookies
   // TODO: Pegar dados de usuário codificados no cookie
