@@ -1,0 +1,67 @@
+@use '../../sass/var.scss' as *;
+
+.sideBar_container {
+  width: 100%;
+  height: 100%;
+  background-color: $bg_global2;
+  flex-direction: column;
+  justify-content: 'flex-start';
+  padding: 48px 28px;
+  top: 0;
+  transition: all 0.5s ease;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  animation: none;
+}
+
+.sideBar_container.close{
+  animation: slideLeft 0.5s forwards;
+}
+
+.sideBar_container.open {
+  animation: slideRight 0.5s forwards;
+}
+
+.sideBar_MenuIcon{
+  font-size: 24px;
+  color: $pure-white;
+  top: 20px;
+  left: 20px;
+  z-index: 100;
+  transition: all 0.3s ease;
+
+}
+
+.sideBar_Icon{
+  font-size: 20px;
+  color: $link-color;
+  cursor: pointer;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+.sideBar_Icon.close{
+  left: auto;
+  right: 20px;
+}
+
+@keyframes slideLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+    position: fixed;
+  }
+}
+
+@keyframes slideRight {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+    position: relative;
+  }
+}
