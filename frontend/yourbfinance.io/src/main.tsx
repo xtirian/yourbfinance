@@ -7,15 +7,27 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { UserProvider } from './context/user.context.tsx';
 import LoginPagina from './pages/public/login/index.tsx';
 import SignupPagina from './pages/public/signup/index.tsx';
+import DashBoardPagina from './pages/auth/dashboard/index.tsx';
+import AuthLayout from './pages/auth/layout.tsx';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <LoginPagina />,    
+    element: <LoginPagina />,
   },
   {
     path: '/signup',
     element: <SignupPagina />,
+  },
+  {
+    path: '/auth',
+    element: <AuthLayout />,
+    children: [
+      {
+        path: '/auth/dashboard',
+        element: <DashBoardPagina />,
+      },
+    ],
   },
 ]);
 
