@@ -27,7 +27,6 @@ const SignupPagina = () => {
 
   const handleSubmit = async (data: UserModel) => {
     const response = await signup(data);
-    console.log(response);
     if (response) {
       setTimeout(() => {
         navigate('/');

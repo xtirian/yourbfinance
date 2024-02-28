@@ -19,5 +19,4 @@ export class BadRequest extends Error {}
 
 export interface ErrorResponse {
   message?: string;
- 
 }
